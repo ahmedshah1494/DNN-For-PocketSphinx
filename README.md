@@ -26,13 +26,17 @@ Frame N: f_1,...,f_M (4*M bytes)
 Look at readMFC in utils.py
 ### state-segmentation files
 format for each frame:
+```
  2    2   2    1   4  bytes
 st1 [st2 st3] pos scr
+```
 ### Prediction output
 format for each frame:
+```
 N: number of states
 N (2 bytes)
 scr_1...scr_N (2*N bytes)
+```
 ### Wrapper Scripts 
 -
 - runNNTrain.py -train_data -val_data
