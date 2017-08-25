@@ -108,23 +108,23 @@ readSen.py -gmm_score_dir -gmm_ctllist -nn_score_dir -nn_ctllist [-gmm_ext] [-nn
 readSen takes scores (stored in sphinx readable binary files) obtained from a GMM-HMM decoder and a NN, and fit a regression to them.
 
 ## Example workflow with CMUSphinx
-1- Feature extraction using sphinx_fe:
+- Feature extraction using sphinx_fe:
 	 ```
 	 sphinx_fe -argfile ../../en_us.ci_cont/feat.params -c etc/wsj0_train.fileids -di wav/ -do feat_ci_mls -mswav yes -eo mls -ei wav -ofmt sphinx -logspec yes
 	 ```
-2- State-segmentation using sphinx3_align
+- State-segmentation using sphinx3_align
 	```
 	sphinx3_align -hmm ../../en_us.ci_cont/ -dict etc/cmudict.0.6d.wsj0 -ctl etc/wsj0_train.fileids -cepdir feat_ci_mls/ -cepext .mfc -insent etc/wsj0.transcription -outsent wsj0.out -stsegdir stateseg_ci_dir/ -cmn batch
 	```
-3- Generate dataset using runDatasetGen.py
-4- Train NN using runNNtrain.py
-5- Generate predictions from the NN using runNNPredct.py
-6- Generate predictions from PocketSphinx
+- Generate dataset using runDatasetGen.py
+- Train NN using runNNtrain.py
+- Generate predictions from the NN using runNNPredct.py
+- Generate predictions from PocketSphinx
 ```
 pocketsphinx_batch -hmm ../../en_us.ci_cont/ -lm ../../tcb20onp.Z.DMP -cepdir feat_ci_mfc/ -ctl ../../GSOC/SI_ET_20.NDX -dict etc/cmudict.0.6d.wsj0 -senlogdir sendump_ci/ -compallsen yes -bestpath no -fwdflat no -remove_noise no -remove_silence no -logbase 1.0001 -pl_window 0
 ```
-7- Compute the acoustic weight using readSen.py
-8- Decode the scaled NN predictions with PocketSphinx
+- Compute the acoustic weight using readSen.py
+- Decode the scaled NN predictions with PocketSphinx
 ```
 pocketsphinx_batch -hmm ../../en_us.ci_cont/ -lm ../../tcb20onp.Z.DMP -cepdir senscores/ -cepext .sen -hyp NN2.hyp -ctl ../../GSOC/SI_ET_20.NDX -dict etc/cmudict.0.6d.wsj0 -compallsen yes -logbase 1.0001 -pl_window 0 -senin yes
 ```
