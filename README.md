@@ -38,7 +38,9 @@ N (2 bytes)
 scr_1...scr_N (2*N bytes)
 ```
 ### Wrapper Scripts 
-#### runDatasetGen.py -train_fileids -val_fileids [-test_fileids] -n_filts -feat_dir -feat_ext -stseg_dir -stseg_ext -mdef [-outfile_prefix] [-keep_utts]
+```
+runDatasetGen.py -train_fileids -val_fileids [-test_fileids] -n_filts -feat_dir -feat_ext -stseg_dir -stseg_ext -mdef [-outfile_prefix] [-keep_utts]
+```
 runDatasetGen takes feature files and state-segmentation files stored in sphinx format along with the definition file of the GMM-HMM model to generate a set of numpy arrays that form a python readable dataset.
 
 runDatasetGen writes the following files in the directory it was called in:
