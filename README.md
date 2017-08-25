@@ -56,9 +56,9 @@ runDatasetGen writes the following files in the directory it was called in:
 
 The metadata file is a zipped collection of arrays with the follwing keys:
 - File names for utterances
-	-filenames_Train
-	-filenames_Dev
-	-filenames_Test
+	- filenames_Train
+	- filenames_Dev
+	- filenames_Test
 - Number of frames per utterance (useful if -keep_utts is not set)
 	- framePos_Train
 	- framePos_Dev
@@ -77,25 +77,58 @@ The architecture and parameters of the neural network is defined in a text file.
 - MLP with short cut connections (resnet)
 - Convolutional Network with residual connections in the fully connected layers (conv + resnet)
 See sample_nn.cfg for an example.
-The format for the configuration file is:
-```
-param value
-```
+The format for the configuration file consists of ```param``` and ```value``` pairs
 if value has multiple elemets (represented by ... below) they should be separated by spaces.
 Params and possible values:
-- type 			mlp, conv, resnet, conv+resnet
-- width 		any integer value
-- depth			any integer value
-- dropout		float in (0,1)
-- batch_norm	-
-- activation	sigmoid, hard_sigmoid, elu, relu, selu, tanh, softplus, softsign, softmax, linear
-- optimizer		sgd, adam, adagrad
-- lr 			float in (0,1)
-- batch_size 	any integer value
-- ctc_loss		-
+- **type** 			mlp, conv, resnet, conv+resnet
+- **width** 		any integer value
+- **depth**			any integer value
+- **dropout**		float in (0,1)
+- **batch_norm**	-
+- **activation**	sigmoid, hard_sigmoid, elu, relu, selu, tanh, softplus, softsign, softmax, linear
+- **optimizer**		sgd, adam, adagrad
+- **lr** 			float in (0,1)
+- **batch_size** 	any integer value
+- **ctc_loss**		-
 for type = conv and type = conv+resnet
-- conv 			[n_filters, filter_window]...
-- pooling		None, [max/avg, window_size, stride_size]
+- **conv** 			[n_filters, filter_window]...
+- **pooling**		None, [max/avg, window_size, stride_size]
 for type = resnet and type = conv+resnet
-- block_depth	any integer value
-- n_blocks		any integer value
+- **block_depth**	any integer value
+- **n_blocks**		any integer value
+```
+runNNPredict -keras_model -ctldir -inext -outdir -outext -nfilts [-acoustic_weight] [-context_win] [-cuda_device_id]
+```
+runNNPredict takes a keras model and a list of feature files to generate predictions. The predictions are stored as binary files in sphinx readable format (defined above).
+Please ensure that the dimensionality of the feature vectors matches nfilts and the context window is the same as that for which the model was trained.
+The acoustic_weight is used to scale the output scores. This is required because if the scores are passed through a GMM-GMM decoder like PocketSphinx are too small or too large then the decoding performance suffers. One way of estimating this weight is to generate scores from the GMM-HMM decoder being used, fit a linear regression between the GMM-HMM scores and the NN-scores and use the coefficient as the weight.
+```
+readSen.py -gmm_score_dir -gmm_ctllist -nn_score_dir -nn_ctllist [-gmm_ext] [-nn_ext]
+```
+readSen takes scores (stored in sphinx readable binary files) obtained from a GMM-HMM decoder and a NN, and fit a regression to them.
+
+## Example workflow with CMUSphinx
+1- Feature extraction using sphinx_fe:
+	 ```
+	 sphinx_fe -argfile ../../en_us.ci_cont/feat.params -c etc/wsj0_train.fileids -di wav/ -do feat_ci_mls -mswav yes -eo mls -ei wav -ofmt sphinx -logspec yes
+	 ```
+2- State-segmentation using sphinx3_align
+	```
+	sphinx3_align -hmm ../../en_us.ci_cont/ -dict etc/cmudict.0.6d.wsj0 -ctl etc/wsj0_train.fileids -cepdir feat_ci_mls/ -cepext .mfc -insent etc/wsj0.transcription -outsent wsj0.out -stsegdir stateseg_ci_dir/ -cmn batch
+	```
+3- Generate dataset using runDatasetGen.py
+4- Train NN using runNNtrain.py
+5- Generate predictions from the NN using runNNPredct.py
+6- Generate predictions from PocketSphinx
+```
+pocketsphinx_batch -hmm ../../en_us.ci_cont/ -lm ../../tcb20onp.Z.DMP -cepdir feat_ci_mfc/ -ctl ../../GSOC/SI_ET_20.NDX -dict etc/cmudict.0.6d.wsj0 -senlogdir sendump_ci/ -compallsen yes -bestpath no -fwdflat no -remove_noise no -remove_silence no -logbase 1.0001 -pl_window 0
+```
+7- Compute the acoustic weight using readSen.py
+8- Decode the scaled NN predictions with PocketSphinx
+```
+pocketsphinx_batch -hmm ../../en_us.ci_cont/ -lm ../../tcb20onp.Z.DMP -cepdir senscores/ -cepext .sen -hyp NN2.hyp -ctl ../../GSOC/SI_ET_20.NDX -dict etc/cmudict.0.6d.wsj0 -compallsen yes -logbase 1.0001 -pl_window 0 -senin yes
+```
+
+
+
+

@@ -122,7 +122,7 @@ def _gen_bracketed_data_3D(x,y,batch_size,context_len):
 		for i in range(len(x)):
 			data = x[i]
 			labels = y[i]
-			if context_len != None:
+			if context_len != 0:
 				pad_top = np.zeros((context_len,data.shape[1]))
 				pad_bot = np.zeros((context_len,data.shape[1]))
 				padded_data = np.concatenate((pad_top,data),axis=0)

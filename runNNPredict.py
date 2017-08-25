@@ -18,7 +18,7 @@ parser.add_argument('-nfilts', type=int, required=True,
 						help='dimensionality of the feature vectors')
 parser.add_argument('-acoustic_weight',type=float,required=False,
 						help='The weight to scale the predictions by. Sometimes needed to get meaningful predictions from PocketSphinx')
-parser.add_argument('-context_win',type=int, required=False, default=5,
+parser.add_argument('-context_win',type=int, required=False, default=0,
 						help='number of contextual frames to include from before and after the target frame (defaults to 5)')
 parser.add_argument('-cuda_device_id', type=str, required=False, default="",
 						help="The CUDA-capable GPU device to use for execution. If none is specified, the code will execute on the CPU. If specifying multiple devices, separate the id's with commas")
