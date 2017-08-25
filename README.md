@@ -3,7 +3,10 @@ The work is part of a Google Summer of Code project, the goal of which was to in
 ## Getting Started
 Start by cloning the repository.
 ### Prerequisites
-The required python libraries are in the requirements.txt file. Install them by running:
+The required python libraries available from pypi are in the requirements.txt file. Install them by running:
 ```
 pip install -r requirements.txt
 ```
+Additional libraries not available from pypi:
+- tfrbm- for DBN-DNN pretraining.
+	- available at https://github.com/meownoid/tensorfow-rbm
