@@ -90,12 +90,12 @@ Params and possible values:
 - **lr** 			float in (0,1)
 - **batch_size** 	any integer value
 - **ctc_loss**		-
-for type = conv and type = conv+resnet
-- **conv** 			[n_filters, filter_window]...
-- **pooling**		None, [max/avg, window_size, stride_size]
-for type = resnet and type = conv+resnet
-- **block_depth**	any integer value
-- **n_blocks**		any integer value
+- for type = conv and type = conv+resnet
+	- **conv** 			[n_filters, filter_window]...
+	- **pooling**		None, [max/avg, window_size, stride_size]
+- for type = resnet and type = conv+resnet
+	- **block_depth**	any integer value
+	- **n_blocks**		any integer value
 ```
 runNNPredict -keras_model -ctldir -inext -outdir -outext -nfilts [-acoustic_weight] [-context_win] [-cuda_device_id]
 ```
